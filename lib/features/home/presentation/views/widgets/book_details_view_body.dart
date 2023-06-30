@@ -1,4 +1,5 @@
 import 'package:book_app/core/utils/styles.dart';
+import 'package:book_app/features/home/data/models/book_model/book_model.dart';
 import 'package:book_app/features/home/presentation/views/widgets/book_actions.dart';
 import 'package:book_app/features/home/presentation/views/widgets/book_rating.dart';
 import 'package:book_app/features/home/presentation/views/widgets/custom_book_details_app_bar.dart';
@@ -7,7 +8,8 @@ import 'package:book_app/features/home/presentation/views/widgets/similar_books_
 import 'package:flutter/material.dart';
 
 class BookDetailsViewBody extends StatelessWidget {
-  const BookDetailsViewBody({super.key});
+  const BookDetailsViewBody({super.key, required this.bookModel});
+  final BookModel bookModel;
 
   @override
   Widget build(BuildContext context) {
@@ -24,18 +26,18 @@ class BookDetailsViewBody extends StatelessWidget {
                     padding: EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width * 0.2,
                     ),
-                    child: const CustomBookImage(
-                        imageUrl:
-                            'https://images.unsplash.com/photo-1687979508407-0a0a5036b394?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyfHx8ZW58MHx8fHx8&auto=format&fit=crop&w=500&q=60'),
+                    child: CustomBookImage(
+                        imageUrl: bookModel.volumeInfo!.imageLinks!.thumbnail!),
                   ),
                   const SizedBox(height: 30),
-                  const Text(
-                    'The Jungle Book',
+                  Text(
+                    bookModel.volumeInfo!.title!,
                     style: Styles.textStyle30,
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Rudyard Kipling',
+                    bookModel.volumeInfo!.authors![0],
                     style: Styles.textStyle18.copyWith(
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.w500,
@@ -43,10 +45,10 @@ class BookDetailsViewBody extends StatelessWidget {
                   ),
                   const SizedBox(height: 18),
                   // will be changed later
-                  const BookRating(
+                  BookRating(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    count: 25,
-                    rating: 4,
+                    count: bookModel.volumeInfo?.ratingsCount ?? 0,
+                    rating: bookModel.volumeInfo?.averageRating ?? 0,
                   ),
                   const SizedBox(height: 30),
                   const BooksAction(),

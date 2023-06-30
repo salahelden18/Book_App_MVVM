@@ -1,24 +1,39 @@
+import 'package:book_app/core/widgets/custom_error_widget.dart';
+import 'package:book_app/core/widgets/custom_loading_indicator_widget.dart';
 import 'package:book_app/features/home/presentation/views/widgets/custom_book_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../views_model/similar_books_cubit/similar_books_cubit.dart';
 
 class SimilarBooksListView extends StatelessWidget {
   const SimilarBooksListView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.15,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: 5,
-        itemBuilder: (context, index) => const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4),
-          child: CustomBookImage(
-            imageUrl:
-                'https://images.unsplash.com/photo-1687979508407-0a0a5036b394?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyfHx8ZW58MHx8fHx8&auto=format&fit=crop&w=500&q=60',
-          ),
-        ),
-      ),
+    return BlocBuilder<SimilarBooksCubit, SimilarBooksState>(
+      builder: (context, state) {
+        if (state is SimilarBooksSuccess) {
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * 0.15,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 5,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: CustomBookImage(
+                  imageUrl:
+                      state.books[index].volumeInfo!.imageLinks!.thumbnail!,
+                ),
+              ),
+            ),
+          );
+        } else if (state is SimilarBooksFailure) {
+          return CustomErrorWidget(errMessage: state.errorMessage);
+        } else {
+          return const CustomLoadingIndicator();
+        }
+      },
     );
   }
 }
